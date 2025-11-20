@@ -1,36 +1,31 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <title>Kalz Downloader - Beta</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>Video Saver</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
+
   <div class="bg-blur"></div>
 
   <main class="page">
     <header class="header">
       <div class="brand">
-        <div class="avatar">TS</div>
+        <div class="avatar">VS</div>
         <div>
-          <h1 class="title">Kalz Downloader (Beta)</h1>
-          <p class="subtitle">
-            Tempel URL video publik lalu klik <b>Gas</b>. Tidak perlu login / akun.
-          </p>
+          <h1 class="title">Video Saver</h1>
+          <p class="subtitle">Tempel URL video publik lalu klik Gas. Tidak perlu login.</p>
         </div>
       </div>
     </header>
 
     <section class="card">
-      <label class="input-label" for="urlInput">Masukin link VT nya</label>
+      <label class="input-label">Masukin link videonya</label>
       <div class="input-row">
-        <input
-          id="urlInput"
-          type="url"
-          placeholder="https://vt.tiktok.com/XXXXXXXX/"
-          autocomplete="off"
-        />
+        <input id="urlInput" type="url" placeholder="https://vt.tiktok.com/xxxx/">
       </div>
 
       <div class="button-row">
@@ -38,35 +33,29 @@
         <button id="clearBtn" class="btn btn-ghost">Hapus</button>
       </div>
 
-      <p class="hint">
-        Website ini lagi tahap pengembangan</b>.
-      </p>
-
+      <!-- STATUS -->
       <div id="statusBox" class="status hidden"></div>
 
+      <!-- VIDEO PREVIEW -->
+      <div id="playerBox" class="player-box hidden">
+        <div class="player-header">
+          <span>Video ditemukan</span>
+          <button id="openBtn" class="btn-open">Open / Download</button>
+        </div>
+        <video id="previewVideo" controls playsinline></video>
+      </div>
+
+      <!-- THUMBNAIL PREVIEW (opsional) -->
+      <div id="thumbBox" class="thumb-box hidden">
+        <img id="thumbImg" src="" alt="Thumbnail video">
+      </div>
+
+      <!-- HASIL DOWNLOAD -->
       <div id="resultBox" class="result hidden">
         <h3>Hasil Parser</h3>
         <div id="resultList"></div>
       </div>
-    </section>
 
-    <section class="card card-info">
-      <h2>Tentang Kalz Downloader (Beta)</h2>
-      <p>
-        Ini contoh situs pengunduh video berbasis web, Kalz Downloader siap melayani anda untuk membantu mendownload video dari tiktok).
-      </p>
-      <h3>Fitur Utama</h3>
-      <ul>
-        <li>UI modern, responsif, enak di HP.</li>
-        <li>Tanpa login atau install aplikasi.</li>
-        <li>Deploy gratis di GitHub Pages.</li>
-        <li>Bisa dihubungkan ke beberapa server / API cadangan.</li>
-        </li>Copyright @Kalz.</li>
-      </ul>
-      <p class="disclaimer">
-        Gunakan hanya untuk konten yang kamu punya haknya.
-        Pastikan video kamu patuh hukum & kebijakan platform.
-      </p>
     </section>
   </main>
 
