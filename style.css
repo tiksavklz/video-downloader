@@ -1,0 +1,196 @@
+/* ---- RESET ---- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+
+body {
+  background: #0a0f1a;
+  color: #e7e7e7;
+  min-height: 100vh;
+}
+
+/* ---- BACKGROUND BLUR ---- */
+.bg-blur {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at top, #14325c, #0a0f1a 70%);
+  z-index: -1;
+  filter: blur(40px);
+}
+
+/* ---- PAGE WRAPPER ---- */
+.page {
+  max-width: 720px;
+  margin: auto;
+  padding: 20px;
+}
+
+/* ---- HEADER ---- */
+.header {
+  margin-bottom: 25px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.avatar {
+  width: 50px;
+  height: 50px;
+  background: #1a3b6b;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 20px;
+  color: #fff;
+}
+
+.title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #eaf3ff;
+}
+
+.subtitle {
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+/* ---- CARD ---- */
+.card {
+  background: rgba(255,255,255,0.05);
+  padding: 20px;
+  border-radius: 14px;
+  margin-bottom: 25px;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* ---- INPUT ---- */
+.input-label {
+  font-size: 15px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.input-row input {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  font-size: 15px;
+  background: #0f1829;
+  color: white;
+  border: 1px solid #274b70;
+}
+
+.input-row input:focus {
+  outline: 2px solid #3c84ff;
+}
+
+/* ---- BUTTONS ---- */
+.button-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.btn {
+  flex: 1;
+  padding: 12px;
+  font-size: 15px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-primary {
+  background: #3c84ff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #1f6fed;
+}
+
+.btn-ghost {
+  background: rgba(255,255,255,0.1);
+  color: white;
+}
+
+.btn-ghost:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+/* ---- STATUS ---- */
+.status {
+  padding: 12px;
+  background: #0f2540;
+  border-left: 4px solid #3c84ff;
+  border-radius: 6px;
+  margin-top: 10px;
+}
+
+.hidden {
+  display: none;
+}
+
+/* ---- RESULT ---- */
+.result {
+  margin-top: 20px;
+}
+
+.result h3 {
+  margin-bottom: 10px;
+}
+
+.download-item {
+  background: rgba(255,255,255,0.08);
+  padding: 14px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.download-item button {
+  padding: 8px 12px;
+  background: #3c84ff;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.download-item button:hover {
+  background: #1d6ae5;
+}
+
+/* ---- ABOUT ---- */
+.card-info h2 {
+  margin-bottom: 6px;
+}
+
+.card-info ul {
+  margin-left: 20px;
+  margin-top: 10px;
+  margin-bottom: 15px;
+}
+
+.card-info li {
+  margin-bottom: 5px;
+}
+
+.disclaimer {
+  font-size: 13px;
+  opacity: 0.7;
+}
