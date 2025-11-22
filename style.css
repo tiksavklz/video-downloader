@@ -18,13 +18,13 @@ body {
   background-attachment: fixed;
 }
 
-/* OVERLAY (HAPUS BLUR) */
+/* OVERLAY (TIPIS, FOTO TETAP JELAS) */
 body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background: rgba(5, 10, 25, 0.15); /* TIPIS BANGET BIAR TETAP KEBACA */
-  backdrop-filter: none !important;   /* <-- NO BLUR */
+  content:"";
+  position:fixed;
+  inset:0;
+  background: linear-gradient(180deg, rgba(2,6,20,0.45), rgba(2,6,20,0.55));
+  backdrop-filter: none !important;   /* MATIKAN BLUR */
   z-index: 0;
 }
 
@@ -41,12 +41,13 @@ body::before {
    CARD (GLASSMORPHISM + NEON)
    ============================= */
 .card {
-  background: rgba(0, 0, 25, 0.20); /* transparan */
-  backdrop-filter: none !important; /* HAPUS BLUR */
+  background: rgba(0, 8, 25, 0.35);
+  backdrop-filter: blur(8px);
   border-radius: 16px;
   padding: 18px;
-  border: 1px solid rgba(120,160,255,0.22);
-  box-shadow: 0 4px 22px rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(120,160,255,0.18);
+  box-shadow: 0 4px 22px rgba(0, 0, 0, 0.55),
+              0 0 22px rgba(45,120,255,0.28) inset;
 }
 
 /* HEADER */
@@ -132,11 +133,11 @@ body::before {
    ==================== */
 .result {
   margin-top:20px;
-  background: rgba(0,0,40,0.25); /* TIPIS */
+  background: rgba(0,0,20,0.35);
   padding:16px;
   border-radius:14px;
-  border:1px solid rgba(120,160,255,0.22);
-  backdrop-filter: none !important;
+  border:1px solid rgba(120,160,255,0.25);
+  backdrop-filter: blur(5px);
 }
 .result.hidden { display:none; }
 
@@ -213,153 +214,4 @@ body::before {
   .download-btn, .btn-download {
     width: 100%;
   }
-}
-/* ===== Lightning animated overlay ===== */
-#lightning {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  mix-blend-mode: screen; /* bikin glow menyatu ke bg */
-  z-index: 0; /* di bawah .page (page punya z-index:1) */
-  opacity: 0;
-  transition: opacity 120ms ease-out;
-  background-repeat: no-repeat;
-  background-size: cover;
-  filter: brightness(1.05) contrast(1.05);
-}
-
-/* cepat flash animation (dipakai class .flash) */
-#lightning.flash {
-  animation: lightning-fade 300ms ease-out forwards;
-}
-
-@keyframes lightning-fade {
-  0%   { opacity: 0; transform: scale(1); }
-  20%  { opacity: 1; transform: scale(1.02); }
-  50%  { opacity: 0.6; transform: scale(1.01); }
-  100% { opacity: 0; transform: scale(1); }
-}
-
-/* optional: sedikit garis petir bergerak (lebih dekoratif) */
-#lightning .bolt {
-  position: absolute;
-  width: 140%;
-  height: 140%;
-  left: -20%;
-  top: -20%;
-  background-image: radial-gradient(circle at var(--x,50%) var(--y,10%),
-    rgba(255,255,255,0.95) 0%,
-    rgba(200,230,255,0.35) 6%,
-    rgba(120,160,255,0.10) 12%,
-    transparent 18%);
-  mix-blend-mode: screen;
-  opacity: 0;
-  transform-origin: center;
-  pointer-events: none;
-  filter: blur(6px) saturate(1.2);
-}
-#lightning .bolt.show {
-  animation: bolt-fade 420ms ease-out forwards;
-}
-@keyframes bolt-fade {
-  0% { opacity: 0; transform: scale(0.96) rotate(0deg); }
-  20% { opacity: 1; transform: scale(1.02) rotate(-2deg); }
-  60% { opacity: 0.5; transform: scale(1.01) rotate(2deg); }
-  100% { opacity: 0; transform: scale(1) rotate(0deg); }
-}
-/* BACKGROUND FLOAT / GERAK PELAN */
-@keyframes bgFloat {
-  0%   { background-position: center top; }
-  50%  { background-position: center 5%; }
-  100% { background-position: center top; }
-}
-
-body {
-  animation: bgFloat 18s ease-in-out infinite;
-}
-/* CINEMATIC ZOOM */
-@keyframes bgZoom {
-  0%   { background-size: 100%; }
-  50%  { background-size: 108%; }
-  100% { background-size: 100%; }
-}
-
-body {
-  animation: bgZoom 22s ease-in-out infinite;
-}
-/* GERAK + ZOOM */
-@keyframes bgMove {
-  0%   { background-position: center top; background-size: 100%; }
-  50%  { background-position: center 4%; background-size: 108%; }
-  100% { background-position: center top; background-size: 100%; }
-}
-
-body {
-  animation: bgMove 20s ease-in-out infinite;
-}
-.bg-flash {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background: radial-gradient(circle at center, rgba(120,180,255,0.6), transparent 70%);
-  mix-blend-mode: screen;
-  animation: flashAnim 2.2s infinite;
-  opacity: 0;
-}
-
-@keyframes flashAnim {
-  0%, 100% { opacity: 0; }
-  45% { opacity: .25; }
-  50% { opacity: .65; }
-  55% { opacity: .25; }
-}
-/* ========== Lightning canvas overlay ========== */
-#lightningCanvas {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none; /* jangan ganggu klik */
-  z-index: 0; /* pastikan .page z-index:1 di atasnya */
-  mix-blend-mode: screen; /* bikin glow menyatu */
-}
-
-/* optional: kalau mau sedikit gelapkan area di luar body agar fokus ke badan killua */
-.bg-flash {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-}
-/* --- Lightning overlay (pastikan TIDAK blok klik) --- */
-#lightningCanvas,
-.bg-flash {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none; /* -> biar klik melewati overlay */
-  z-index: 0;            /* taruh di bawah konten (.page z-index:1/2) */
-  mix-blend-mode: screen; /* optional, buat glow lebih neon */
-}
-
-/* pastikan konten utama teratas agar bisa diklik */
-.page, .card {
-  position: relative;
-  z-index: 2;
-}
-
-/* jika ada header/toolbar yang juga butuh di atas overlay */
-.header, .button-row, .result, .btn, .download-btn {
-  position: relative;
-  z-index: 3;
-}
-
-/* kalau lo pake elemen .bg-blur atau body::before overlay tipis,
-   pastikan juga z-index nya lebih kecil dari .page */
-body::before, .bg-blur {
-  z-index: 1;
-  pointer-events: none;
 }
