@@ -1,130 +1,36 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8" />
   <title>Kalz Downloader - Beta</title>
-
-  <style>
-    /* ===== Page / BG ===== */
-    * { box-sizing: border-box; }
-    html,body { height:100%; margin:0; font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; }
-    body {
-      color: #eaf2ff;
-      background-image: url("killua-bg.jpg"); /* <-- pastikan file ada di repo */
-      background-position: center top;
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-attachment: fixed;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-    }
-
-    /* ringan overlay supaya teks tetap terbaca tapi gambar tetap jelas */
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background: rgba(2,6,18,0.28); /* tipis supaya foto tetep jelas */
-      z-index: 0;
-    }
-
-    /* ===== Lightning canvas (overlay visual tetapi tidak ganggu klik) ===== */
-    #lightningCanvas {
-      position: fixed;
-      left: 0; top: 0;
-      width: 100vw; height: 100vh;
-      pointer-events: none;   /* penting: jangan ganggu klik */
-      z-index: 0;             /* di bawah konten (konten pake z-index:1) */
-      mix-blend-mode: screen; /* bikin glow efek lebih neon */
-    }
-
-    /* ===== Page wrapper & cards (above canvas) ===== */
-    .page {
-      position: relative;
-      z-index: 1; /* pastikan di atas canvas */
-      max-width: 820px;
-      margin: 28px auto;
-      padding: 22px;
-    }
-
-    .card {
-      border-radius: 14px;
-      padding: 18px;
-      background: rgba(0,6,18,0.45);
-      border: 1px solid rgba(255,255,255,0.04);
-      box-shadow: 0 8px 30px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.02);
-    }
-
-    .header { display:flex; gap:14px; align-items:center; margin-bottom:14px; }
-    .avatar {
-      width:56px; height:56px; border-radius:50%;
-      background: linear-gradient(135deg,#2e6bff,#6d3bff);
-      display:flex;align-items:center;justify-content:center;
-      font-weight:700;color:#fff; box-shadow: 0 8px 26px rgba(46,107,255,0.12);
-    }
-    .title { font-size:28px; margin:0; font-weight:900; color:#fff; text-shadow: 0 3px 18px rgba(40,100,255,0.12); }
-    .subtitle { margin:0; opacity:.88; color:#d7e9ff; font-size:13px; }
-
-    label.input-label { display:block; color:#dbeefe; margin-bottom:8px; font-weight:600; }
-
-    #urlInput {
-      width:100%;
-      padding:14px 16px;
-      border-radius:12px;
-      background: rgba(0,0,0,0.38);
-      color:#fff;
-      border: 1px solid rgba(140,180,255,0.25);
-      box-shadow: inset 0 2px 10px rgba(10,20,40,0.25);
-      font-size:15px;
-    }
-
-    .button-row { display:flex; gap:12px; margin-top:12px; align-items:center; }
-    .btn { padding:12px 18px; border-radius:12px; font-weight:800; cursor:pointer; border:0; }
-    .btn-primary {
-      background: linear-gradient(180deg,#3f6aff,#2a4dff); color:#fff;
-      box-shadow: 0 10px 30px rgba(50,100,255,0.18);
-    }
-    .btn-ghost {
-      background: rgba(255,255,255,0.06); color:#d7e9ff; border-radius:12px; padding:12px 18px;
-    }
-
-    .hint { margin-top:12px; color:#dbeefe; opacity:0.9; }
-
-    /* Results */
-    #resultBox { margin-top:18px; padding:16px; border-radius:12px; background: rgba(0,0,0,0.28); border:1px solid rgba(255,255,255,0.03); }
-    #resultBox.hidden { display:none; }
-    .player, .thumb { border-radius:12px; overflow:hidden; box-shadow: 0 14px 40px rgba(0,0,0,0.5); }
-    .download-btn { display:inline-block; padding:12px 18px; border-radius:12px; background:#2a53ff; color:#fff; text-decoration:none; font-weight:700; }
-    .result-list { margin-top:12px; }
-
-    h2,h3 { color:#fff; }
-
-    /* Mobile tweaks */
-    @media (max-width:520px) {
-      .title { font-size:24px; }
-      .page { padding:14px; margin:16px auto; }
-      .download-btn { width:100%; text-align:center; display:block; }
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
+  <div class="bg-blur"></div>
+
   <main class="page">
-    <header class="header card">
+    <header class="header">
       <div class="brand">
         <div class="avatar">TS</div>
         <div>
           <h1 class="title">Kalz Downloader (Beta)</h1>
-          <p class="subtitle">Tempel URL video publik lalu klik <b>Download</b>. Tidak perlu login / akun.</p>
+          <p class="subtitle">
+            Tempel URL video publik lalu klik <b>Download</b>. Tidak perlu login / akun.
+          </p>
         </div>
       </div>
     </header>
 
-    <section class="card" aria-label="form">
+    <section class="card">
       <label class="input-label" for="urlInput">Masukin link VT nya</label>
       <div class="input-row">
-        <input id="urlInput" type="url" placeholder="https://vt.tiktok.com/XXXXXXXX/" autocomplete="off" />
+        <input
+          id="urlInput"
+          type="url"
+          placeholder="https://vt.tiktok.com/XXXXXXXX/"
+          autocomplete="off"
+        />
       </div>
 
       <div class="button-row">
@@ -132,26 +38,35 @@
         <button id="clearBtn" class="btn btn-ghost">Hapus</button>
       </div>
 
-      <p class="hint">Jika ngebug silahkan pencet tombol download lagi</p>
+      <p class="hint">
+        Jika ngebug silahkan pencet button download lagi
+      </p>
 
       <div id="resultBox" class="result hidden">
         <h3>Hasil Parser</h3>
 
+        <!-- Player preview (satu video) -->
         <div id="playerBox" class="player hidden" style="margin-bottom:12px;">
-          <video id="previewVideo" controls playsinline style="width:100%; border-radius:10px;">Your browser does not support the video tag.</video>
+          <video id="previewVideo" controls playsinline style="width:100%; border-radius:10px;">
+            Your browser does not support the video tag.
+          </video>
         </div>
 
+        <!-- Thumbnail fallback -->
         <div id="thumbBox" class="thumb hidden" style="margin-bottom:12px;">
           <img id="thumbImg" src="" alt="thumbnail" style="width:100%; border-radius:10px;">
         </div>
 
+        <!-- Title + list -->
         <div id="resultList" class="result-list"></div>
       </div>
     </section>
 
-    <section class="card card-info" style="margin-top:18px;">
+    <section class="card card-info">
       <h2>Tentang Kalz Downloader</h2>
-      <p>Ini adalah situs pengunduh video berbasis website, kalz downloader siap membantu Anda yang sedang kesulitan saat mendownload video dari tiktok</p>
+      <ul>
+        Ini adalah situs pengunduh video berbasis website, kalz downloader siap membantu Anda yang sedang kesulitan saat mendownload video dari tiktok
+      </ul>
       <h3>Fitur Utama</h3>
       <ul>
         <li>UI modern, responsif, enak di HP.</li>
@@ -159,200 +74,17 @@
         <li>Website gratis untuk publik</li>
         <li>Tanpa Watermark</li>
       </ul>
-      <p class="disclaimer">Gunakan website ini sesuai kebijakan pengembang. Hak cipta @kalz sann</p>
+      <p class="disclaimer">
+        Gunakan website ini sesuai kebijakan pengembang.<br>
+        Hak cipta @kalz sann
+      </p>
     </section>
   </main>
 
-  <!-- canvas untuk efek petir (tidak menghalangi klik) -->
-  <canvas id="lightningCanvas" aria-hidden="true"></canvas>
+  <!-- efek kilat / lightning overlay -->
+  <div class="bg-flash"></div>
+  <canvas id="lightningCanvas"></canvas>
 
-  <script>
-    /* -------------------------
-       Lightning overlay script
-       - Simple "flash + branch" lines with trails
-       - pointer-events none, so UI tetap bisa diklik
-       ------------------------- */
-    (function () {
-      const canvas = document.getElementById('lightningCanvas');
-      const ctx = canvas.getContext('2d', { alpha: true });
-
-      let w = 0, h = 0, dpr = 1;
-      const flashes = [];
-
-      function resize() {
-        dpr = Math.max(1, window.devicePixelRatio || 1);
-        w = Math.max(300, window.innerWidth);
-        h = Math.max(300, window.innerHeight);
-        canvas.width = Math.round(w * dpr);
-        canvas.height = Math.round(h * dpr);
-        canvas.style.width = w + 'px';
-        canvas.style.height = h + 'px';
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      }
-
-      window.addEventListener('resize', resize, { passive:true });
-      resize();
-
-      // spawn a lightning flash from random side toward center-ish
-      function spawnFlash() {
-        // random origin near edges
-        const edge = Math.random();
-        let x0, y0;
-        if (edge < 0.33) { x0 = -30; y0 = Math.random() * h; }
-        else if (edge < 0.66) { x0 = w + 30; y0 = Math.random() * h; }
-        else { x0 = Math.random() * w; y0 = -40; }
-
-        // target roughly center with jitter
-        const tx = w * (0.45 + (Math.random() - 0.5) * 0.25);
-        const ty = h * (0.35 + (Math.random() - 0.5) * 0.35);
-
-        const life = 380 + Math.random() * 240;
-        flashes.push({
-          x0, y0, tx, ty,
-          created: performance.now(),
-          life,
-          branches: 1 + Math.floor(Math.random()*3),
-          hue: 200 + Math.random()*40
-        });
-      }
-
-      // draw single flash (jagged polyline with branches)
-      function drawFlash(f, now) {
-        const age = now - f.created;
-        const t = age / f.life;
-        if (t > 1) return false;
-
-        // alpha envelope (fade in quick, fade out slower)
-        const alpha = Math.max(0, Math.min(1, (1 - Math.pow(t, 2)) * 1.2));
-
-        // glow layers
-        for (let layer = 3; layer >= 0; layer--) {
-          ctx.beginPath();
-          const width = (8 - layer*2) * (0.9 + Math.random() * 0.25) * (1 - t*0.8);
-          ctx.lineWidth = width;
-          ctx.lineCap = 'round';
-          // color: cyan/blue-ish
-          const hue = f.hue;
-          const sat = 90;
-          const light = 60 + layer*6;
-          ctx.strokeStyle = `hsla(${hue}, ${sat}%, ${light}%, ${alpha * (layer===0?1:0.25)})`;
-
-          // create jagged polyline from x0,y0 to tx,ty
-          const steps = 6 + Math.floor(Math.random()*6);
-          for (let i=0;i<=steps;i++) {
-            const p = i/steps;
-            const nx = f.x0 + (f.tx - f.x0) * p + (Math.sin(p*30 + age*0.01 + layer)* (12 * (1-p)));
-            const ny = f.y0 + (f.ty - f.y0) * p + (Math.cos(p*10 - age*0.02 + layer)* (10 * (1-p)));
-            if (i===0) ctx.moveTo(nx, ny); else ctx.lineTo(nx, ny);
-          }
-          ctx.stroke();
-        }
-
-        // occasional bright center flash (fill circle)
-        if (Math.random() < 0.15) {
-          ctx.beginPath();
-          ctx.fillStyle = `rgba(220,255,255, ${0.12 * alpha})`;
-          ctx.arc(f.tx + (Math.random()-0.5)*30, f.ty + (Math.random()-0.5)*30, 40 * (1 - t*0.6), 0, Math.PI*2);
-          ctx.fill();
-        }
-
-        return true;
-      }
-
-      // main loop
-      let last = performance.now();
-      function frame(now) {
-        const dt = now - last;
-        last = now;
-
-        // fade canvas slightly to keep trails
-        ctx.globalCompositeOperation = 'source-over';
-        ctx.fillStyle = 'rgba(0,0,0,0.12)'; // lower = longer trails; increase to reduce ghosting
-        ctx.fillRect(0,0,w,h);
-
-        // add small ambient glow occasionally
-        if (Math.random() < 0.015) spawnFlash();
-        // sometimes burst
-        if (Math.random() < 0.007) {
-          for (let i=0;i<2+Math.floor(Math.random()*3);i++) spawnFlash();
-        }
-
-        // draw flashes
-        ctx.globalCompositeOperation = 'lighter';
-        for (let i = flashes.length - 1; i >= 0; i--) {
-          const keep = drawFlash(flashes[i], now);
-          if (!keep) flashes.splice(i,1);
-        }
-
-        requestAnimationFrame(frame);
-      }
-      requestAnimationFrame(frame);
-
-      // expose small helper to trigger from console / UI
-      window.__triggerLightning = spawnFlash;
-
-      // gentle initial bursts
-      setTimeout(()=>{ spawnFlash(); }, 200);
-      setTimeout(()=>{ spawnFlash(); }, 700);
-      setTimeout(()=>{ spawnFlash(); }, 1500);
-    })();
-  </script>
-
-  <!-- Minimal client script for buttons (kept lightweight) -->
-  <script>
-    // small existing logic replacements (very minimal, only UI wiring)
-    const urlInput = document.getElementById('urlInput');
-    const gasBtn = document.getElementById('gasBtn');
-    const clearBtn = document.getElementById('clearBtn');
-    const resultBox = document.getElementById('resultBox');
-    const previewVideo = document.getElementById('previewVideo');
-    const thumbBox = document.getElementById('thumbBox');
-    const thumbImg = document.getElementById('thumbImg');
-    const resultList = document.getElementById('resultList');
-    const playerBox = document.getElementById('playerBox');
-
-    function showResult(sample) {
-      // sample is an object for demo; real flow should call your API
-      resultList.innerHTML = '';
-      // set thumbnail (demo)
-      if (sample.thumb) {
-        thumbImg.src = sample.thumb;
-        thumbBox.classList.remove('hidden');
-      } else thumbBox.classList.add('hidden');
-
-      // example download button
-      const a = document.createElement('a');
-      a.href = sample.video || '#';
-      a.className = 'download-btn';
-      a.textContent = 'Download Video';
-      a.setAttribute('download', '');
-      resultList.appendChild(a);
-      resultBox.classList.remove('hidden');
-    }
-
-    gasBtn.addEventListener('click', () => {
-      const u = (urlInput.value||'').trim();
-      if (!u) { alert('Masukkan URL video dulu.'); return; }
-      // placeholder demo behavior:
-      // here you should call your real API (callApi in your script.js),
-      // for quick test we fake a parsed result using current background image as thumb
-      showResult({ thumb: 'killua-bg.jpg', video: u });
-      // optional: trigger a big flash when result appears
-      if (window.__triggerLightning) {
-        window.__triggerLightning();
-        setTimeout(() => window.__triggerLightning(), 120);
-      }
-    });
-
-    clearBtn.addEventListener('click', () => {
-      urlInput.value = '';
-      resultBox.classList.add('hidden');
-    });
-
-    // keep accessibility: allow Enter to trigger
-    urlInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') gasBtn.click();
-    });
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
