@@ -194,3 +194,35 @@ body {
   font-size: 13px;
   opacity: 0.7;
 }
+/* CSS kamu yang sekarang */
+/* .... isi style.css ... */
+
+/* ---- BUTTON ---- */
+.btn {
+  padding: 14px 22px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.btn-primary {
+  background: #2a53ff;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: #1938c7;
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 2px solid #4b4bff;
+  color: #d1d1ff;
+}
+
+.btn-ghost:hover {
+  background: rgba(75, 75, 255, 0.2);
+}
