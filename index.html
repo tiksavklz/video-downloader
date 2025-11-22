@@ -25,12 +25,7 @@
     <section class="card">
       <label class="input-label" for="urlInput">Masukin link VT nya</label>
       <div class="input-row">
-        <input
-          id="urlInput"
-          type="url"
-          placeholder="https://vt.tiktok.com/XXXXXXXX/"
-          autocomplete="off"
-        />
+        <input id="urlInput" type="url" placeholder="https://vt.tiktok.com/XXXXXXXX/" autocomplete="off" />
       </div>
 
       <div class="button-row">
@@ -75,16 +70,33 @@
         <li>Tanpa Watermark</li>
       </ul>
       <p class="disclaimer">
-        Gunakan website ini sesuai kebijakan pengembang.<br>
+        Gunakan website ini sesuai kebijakan pengembang.<br />
         Hak cipta @kalz sann
       </p>
     </section>
   </main>
 
-  <!-- efek kilat / lightning overlay -->
+  <!-- efek kilat / flash overlay (letakkan setelah main agar page di atas canvas) -->
   <div class="bg-flash"></div>
   <canvas id="lightningCanvas"></canvas>
 
+  <!-- muat script utama (tetap pakai script.js kamu) -->
   <script src="script.js"></script>
+
+  <!-- Jika kamu belum menaruh kode lightning ke script.js,
+       kamu bisa masukkan kode kecil pemicu di sini.
+       Kalau sudah ada di script.js, bagian ini boleh dihapus. -->
+  <script>
+    // jika script.js sudah mengekspor window.__triggerLightning atau langsung inisialisasi,
+    // nggak perlu apa-apa di sini. Tetapi biar aman: expose pemicu ringan.
+    window.triggerLightning = function () {
+      if (typeof window.__triggerLightning === 'function') {
+        window.__triggerLightning();
+      } else {
+        console.warn('Lightning function not found in script.js');
+      }
+    };
+    // contoh: cara memicu — window.triggerLightning();
+  </script>
 </body>
 </html>
