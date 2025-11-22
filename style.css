@@ -18,13 +18,13 @@ body {
   background-attachment: fixed;
 }
 
-/* OVERLAY (TIPIS, FOTO TETAP JELAS) */
+/* OVERLAY (HAPUS BLUR) */
 body::before {
-  content:"";
-  position:fixed;
-  inset:0;
-  background: linear-gradient(180deg, rgba(2,6,20,0.45), rgba(2,6,20,0.55));
-  backdrop-filter: none !important;   /* MATIKAN BLUR */
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 10, 25, 0.15); /* TIPIS BANGET BIAR TETAP KEBACA */
+  backdrop-filter: none !important;   /* <-- NO BLUR */
   z-index: 0;
 }
 
@@ -41,13 +41,12 @@ body::before {
    CARD (GLASSMORPHISM + NEON)
    ============================= */
 .card {
-  background: rgba(0, 8, 25, 0.35);
-  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 25, 0.20); /* transparan */
+  backdrop-filter: none !important; /* HAPUS BLUR */
   border-radius: 16px;
   padding: 18px;
-  border: 1px solid rgba(120,160,255,0.18);
-  box-shadow: 0 4px 22px rgba(0, 0, 0, 0.55),
-              0 0 22px rgba(45,120,255,0.28) inset;
+  border: 1px solid rgba(120,160,255,0.22);
+  box-shadow: 0 4px 22px rgba(0, 0, 0, 0.45);
 }
 
 /* HEADER */
@@ -133,11 +132,11 @@ body::before {
    ==================== */
 .result {
   margin-top:20px;
-  background: rgba(0,0,20,0.35);
+  background: rgba(0,0,40,0.25); /* TIPIS */
   padding:16px;
   border-radius:14px;
-  border:1px solid rgba(120,160,255,0.25);
-  backdrop-filter: blur(5px);
+  border:1px solid rgba(120,160,255,0.22);
+  backdrop-filter: none !important;
 }
 .result.hidden { display:none; }
 
