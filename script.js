@@ -372,61 +372,70 @@ clearBtn.addEventListener("click", () => {
 });
 
 // pastikan resultList sudah ada (element di DOM)
+// Event delegation untuk tombol download (gantikan blok listener lama dengan ini)
 if (resultList) {
-  resultList.addEventListener("click", async (e) => {
-  const btn = e.target.closest(".btn-download");
-  if (!btn) return;
-  e.preventDefault();
+  // pastikan listener hanya dipasang sekali
+  if (!window.__downloadHandlerInstalled) {
+    window.__downloadHandlerInstalled = true;
 
-  // CEK URL INPUT KOSONG
-  if (!urlInput.value.trim()) {
-      showStatus("Masukkan URL video dulu.", "error");
-      return;
+    resultList.addEventListener("click", async (e) => {
+      const btn = e.target.closest(".btn-download");
+      if (!btn) return; // bukan tombol kita
+      e.preventDefault();
+
+      // Validasi: pastikan user sudah input URL di input atas
+      if (!urlInput || !urlInput.value.trim()) {
+        showStatus("Masukkan URL video dulu.", "error");
+        return;
+      }
+
+      const url = btn.dataset.url || btn.getAttribute("href");
+      const filename = (btn.dataset.fn || "video.mp4").replace(/"/g, "");
+      if (!url) {
+        showStatus("URL download tidak tersedia.", "error");
+        return;
+      }
+
+      // Coba fetch -> blob (force download). Jika upstream blokir CORS, fallback ke buka tab.
+      showStatus("Mengambil file untuk diunduh...", "info");
+      try {
+        const fetchUrl = (USE_CORS_PROXY && CORS_PROXY) ? (CORS_PROXY + url) : url;
+        const res = await fetch(fetchUrl, { mode: "cors" });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const blob = await res.blob();
+
+        const blobUrl = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = blobUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(blobUrl);
+
+        showStatus("Download dimulai.", "success");
+        return;
+      } catch (err) {
+        console.warn("fetch->blob failed:", err);
+        // fallback: coba paksa klik anchor (mungkin browser akan membuka/men-download)
+        try {
+          const a2 = document.createElement("a");
+          a2.href = url;
+          a2.download = filename;
+          a2.target = "_blank";
+          document.body.appendChild(a2);
+          a2.click();
+          a2.remove();
+          showStatus("Mengambil gagal via fetch — membuka link di tab baru.", "info");
+          return;
+        } catch (e2) {
+          console.error("anchor fallback failed:", e2);
+          showStatus("Gagal memulai download. Coba buka link manual.", "error");
+          return;
+        }
+      }
+    });
   }
-
-  const url = btn.dataset.url || btn.getAttribute("href");
-  const filename = btn.dataset.fn || "video.mp4";
-
-    // Cara 1: biarkan browser handle download (download attr) - paling sederhana
-    // buat anchor sementara dan klik
-    try {
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      a.target = "_blank";
-      // jika cross-origin, browser mungkin abaikan download attr.
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      showStatus("Memulai download...", "success");
-    } catch (err) {
-      console.error("Download failed:", err);
-      showStatus("Gagal memulai download langsung. Coba 'Open'.", "error");
-    }
-
-    // Jika mau fallback yang lebih kuat (fetch -> blob -> download),
-    // uncomment bagian ini — berguna kalau browser mengabaikan atribut download karena CORS:
-    /*
-    try {
-      showStatus("Mengambil file...", "info");
-      const res = await fetch(url, { mode: "cors" });
-      if (!res.ok) throw new Error("HTTP " + res.status);
-      const blob = await res.blob();
-      const blobUrl = URL.createObjectURL(blob);
-      const a2 = document.createElement("a");
-      a2.href = blobUrl;
-      a2.download = filename;
-      document.body.appendChild(a2);
-      a2.click();
-      a2.remove();
-      URL.revokeObjectURL(blobUrl);
-      showStatus("Download dimulai.", "success");
-    } catch (err) {
-      console.error("fetch-download failed:", err);
-      showStatus("Gagal download via fetch. Buka link saja.", "error");
-    }
-    */
-  });
 }
 // init
 clearResults();
