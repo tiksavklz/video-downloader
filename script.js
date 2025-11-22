@@ -1,11 +1,20 @@
-// script.js (REPLACE seluruh file dengan ini)
-// Safe version: hanya tampilkan thumbnail OR video player (tidak keduanya)
-
+// script.js - frontend client untuk memanggil "public API" (konfigurable)
+// ------------------------------------------------------
+// CONFIGURATION
+// ------------------------------------------------------
 const API_BASE = "https://www.tikwm.com/api/?url=";
-const API_KEY = "";
-const USE_CORS_PROXY = false;
-const CORS_PROXY = "https://www.tikwm.com/api/?url=";
+// - Ganti API_BASE sesuai API yang hendak dipakai.
+// - Jika pakai TikHub langsung, lihat docs.tikhub.io untuk path endpoint yang benar.
+// - Jika API tidak butuh key, kosongkan API_KEY.
+const API_KEY = ""; // jika perlu: "Bearer xxxxx" atau "API_KEY_HERE"
 
+// CORS proxy (testing only) - jangan pakai untuk produksi
+const USE_CORS_PROXY = false;
+const CORS_PROXY = "https://cors-anywhere.herokuapp.com/"; // contoh public proxy (rate-limit & tidak disarankan)
+
+// ------------------------------------------------------
+// DOM elements (sesuaikan id di index.html mu)
+// ------------------------------------------------------
 const urlInput = document.getElementById("urlInput");
 const gasBtn = document.getElementById("gasBtn");
 const clearBtn = document.getElementById("clearBtn");
@@ -13,11 +22,15 @@ const statusBox = document.getElementById("statusBox");
 const resultBox = document.getElementById("resultBox");
 const resultList = document.getElementById("resultList");
 
+// optional: player / thumbnail containers (jika ada di HTML)
 const playerBox = document.getElementById("playerBox");
 const previewVideo = document.getElementById("previewVideo");
 const thumbBox = document.getElementById("thumbBox");
 const thumbImg = document.getElementById("thumbImg");
 
+// ------------------------------------------------------
+// UI helpers
+// ------------------------------------------------------
 function showStatus(msg, kind = "info") {
   if (!statusBox) return;
   statusBox.classList.remove("hidden");
@@ -37,6 +50,9 @@ function clearResults() {
   hideStatus();
 }
 
+// ------------------------------------------------------
+// Utility: collect possible URLs from JSON
+// ------------------------------------------------------
 function collectUrls(obj, out = new Set()) {
   if (!obj) return out;
   if (typeof obj === "string") {
@@ -53,11 +69,13 @@ function collectUrls(obj, out = new Set()) {
   }
   return out;
 }
+
 function pickThumbnail(json) {
   if (!json) return null;
   if (json.thumbnail) return json.thumbnail;
   if (json.cover) return json.cover;
   if (json.data && (json.data.cover || json.data.thumbnail)) return json.data.cover || json.data.thumbnail;
+
   const urls = Array.from(collectUrls(json));
   for (const u of urls) {
     if (/\.(jpe?g|png|webp|gif)(\?|$)/i.test(u)) return u;
@@ -65,31 +83,84 @@ function pickThumbnail(json) {
   return null;
 }
 
+// ------------------------------------------------------
+// Build request & call API
+// ------------------------------------------------------
 async function callApi(videoUrl) {
+  // build endpoint (simple concat). If API expects POST or other param, modify di sini.
   let endpoint = API_BASE + encodeURIComponent(videoUrl);
-  if (USE_CORS_PROXY && CORS_PROXY) endpoint = CORS_PROXY + encodeURIComponent(endpoint);
+
+  if (USE_CORS_PROXY) {
+    endpoint = CORS_PROXY + endpoint;
+  }
 
   const headers = { Accept: "application/json" };
-  if (API_KEY && API_KEY.length) headers["Authorization"] = API_KEY;
+  if (API_KEY && API_KEY.length) {
+    headers["Authorization"] = API_KEY;
+  }
 
   const res = await fetch(endpoint, { method: "GET", headers });
   if (!res.ok) {
-    const text = await res.text().catch(()=>"");
+    const text = await res.text().catch(() => "");
     const err = new Error(`HTTP ${res.status}`);
     err.raw = text;
     throw err;
   }
+
   const ct = res.headers.get("content-type") || "";
-  if (ct.includes("application/json") || ct.includes("text/json")) return res.json();
-  const txt = await res.text();
-  try { return JSON.parse(txt); } catch (e) {
-    const err = new Error("Upstream returned non-JSON");
-    err.raw = txt;
+  if (ct.includes("application/json") || ct.includes("text/json")) {
+    return res.json();
+  } else {
+    const txt = await res.text();
+    try {
+      return JSON.parse(txt);
+    } catch (e) {
+      const err = new Error("Upstream returned non-JSON response");
+      err.raw = txt;
+      throw err;
+    }
+  }
+}
+
+// ------------------------------------------------------
+// Download utility: fetch -> blob -> save
+// - note: akan gagal jika file server memblok CORS (browser)
+// ------------------------------------------------------
+async function downloadBlob(url, filename = "video.mp4") {
+  try {
+    showStatus("Mengunduh file...", "info");
+
+    // if you want to route file download through proxy for CORS testing:
+    let fetchUrl = url;
+    if (USE_CORS_PROXY) fetchUrl = CORS_PROXY + url;
+
+    const res = await fetch(fetchUrl);
+    if (!res.ok) throw new Error("Fetch failed: " + res.status);
+
+    const blob = await res.blob();
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(a.href);
+
+    hideStatus();
+  } catch (err) {
+    console.error("Download error", err);
+    let msg = err.message || "Gagal mendownload";
+    if (String(msg).toLowerCase().includes("cors")) {
+      msg = "Gagal mendownload — kemungkinan diblokir CORS. Gunakan server-proxy untuk mengatasi.";
+    }
+    showStatus("Error: " + msg, "error");
     throw err;
   }
 }
 
-// Ganti fungsi renderResult di script.js dengan ini
+// ------------------------------------------------------
+// Render result: map various possible response shapes into UI
+// ------------------------------------------------------
 function renderResult(payload) {
   // normalize wrapper
   if (payload && payload.ok && payload.result) payload = payload.result;
@@ -236,44 +307,79 @@ function renderResult(payload) {
 
   resultBox.classList.remove("hidden");
 }
-
-// ---------- MAIN ----------
+// ------------------------------------------------------
+// Main flow: called when user clicks Gas
+// ------------------------------------------------------
 async function processUrl(videoUrl) {
   clearResults();
   showStatus("Menghubungi API...", "info");
-  if (gasBtn){ gasBtn.disabled = true; gasBtn.textContent = "Proses..."; }
+  gasBtn.disabled = true;
+  gasBtn.textContent = "Proses...";
 
   try {
     const json = await callApi(videoUrl);
+
     showStatus("Sukses menerima respons. Rendering...", "success");
     renderResult(json);
   } catch (err) {
-    console.error("API error", err);
+    console.error("API error:", err);
     let msg = err.message || "Gagal memanggil API";
     if ((err.raw && String(err.raw).toLowerCase().includes("cors")) || msg.toLowerCase().includes("cors")) {
-      msg = "Request diblokir (CORS). Gunakan server-proxy.";
+      msg = "Request diblokir (CORS). Solusi: gunakan server-proxy atau aktifkan CORS proxy untuk testing.";
+    } else if (err.raw) {
+      console.log("Upstream raw:", err.raw);
     }
     showStatus("Error: " + msg, "error");
   } finally {
-    if (gasBtn){ gasBtn.disabled = false; gasBtn.textContent = "Download"; }
+    gasBtn.disabled = false;
+    gasBtn.textContent = "Gas";
   }
 }
 
-// ---------- EVENTS ----------
-if (gasBtn) {
-  gasBtn.addEventListener("click", () => {
-    const u = (urlInput && urlInput.value || "").trim();
-    if (!u) { showStatus("Masukkan URL video dulu.", "error"); return; }
-    try { new URL(u); } catch { showStatus("Format URL tidak valid.", "error"); return; }
-    processUrl(u);
-  });
-}
-if (clearBtn) {
-  clearBtn.addEventListener("click", () => {
-    if (urlInput) urlInput.value = "";
-    clearResults();
+// ------------------------------------------------------
+// Event listeners
+// ------------------------------------------------------
+gasBtn.addEventListener("click", () => {
+  const u = (urlInput.value || "").trim();
+  if (!u) {
+    showStatus("Masukkan URL video dulu.", "error");
+    return;
+  }
+  try { new URL(u); } catch { showStatus("Format URL tidak valid.", "error"); return; }
+  processUrl(u);
+});
+
+clearBtn.addEventListener("click", () => {
+  urlInput.value = "";
+  clearResults();
+});
+
+// Event delegation: tangani klik tombol download yang dibuat dinamis
+if (resultList) {
+  resultList.addEventListener("click", async (e) => {
+    const dl = e.target.closest(".btn-download");
+    if (!dl) return;
+    const url = dl.dataset.url;
+    const fn = dl.dataset.fn || "video.mp4";
+    if (!url) {
+      showStatus("URL download tidak tersedia.", "error");
+      return;
+    }
+
+    try {
+      await downloadBlob(url, fn);
+    } catch (err) {
+      // error sudah ditangani di downloadBlob
+    }
   });
 }
 
+// init
 clearResults();
 hideStatus();
+
+/* NOTES:
+ - Ganti API_BASE ke endpoint yang sesuai. Jika endpoint butuh POST / body JSON, ubah callApi() agar melakukan POST.
+ - Jangan taruh API_KEY di client untuk production; buat server proxy dan simpan key di ENV.
+ - Jika butuh, gue bisa siapkan contoh server-proxy (server.js + package.json) yang memanggil TikHub/TikWM dan meneruskan respons ke client tanpa CORS.
+*/
