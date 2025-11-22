@@ -2,14 +2,14 @@
 // ------------------------------------------------------
 // CONFIGURATION
 // ------------------------------------------------------
-const API_BASE = "https://api.tikhub.io";
+const API_BASE = "https://www.tikwm.com/api/?url=";
 // - Ganti API_BASE sesuai API yang hendak dipakai.
 // - Jika pakai TikHub langsung, lihat docs.tikhub.io untuk path endpoint yang benar.
 // - Jika API tidak butuh key, kosongkan API_KEY.
-const API_KEY = "qM85Aeov60aiwkuDOLO3xjjgByadXrd9xCLFhEfdffubiA+DLG2qXTuEDQ=="; // jika perlu: "Bearer xxxxx" atau "API_KEY_HERE"
+const API_KEY = ""; // jika perlu: "Bearer xxxxx" atau "API_KEY_HERE"
 // CORS proxy (testing only) - jangan pakai untuk produksi
 const USE_CORS_PROXY = false;
-const CORS_PROXY = "https://api.allorigins.win/raw?url="; // contoh public proxy (rate limit & tidak disarankan)
+const CORS_PROXY = "https://www.tikwm.com/api/?url="; // contoh public proxy (rate limit & tidak disarankan)
 
 // ------------------------------------------------------
 // DOM elements (sesuaikan id di index.html mu)
