@@ -194,38 +194,61 @@ function renderResult(payload) {
   // fallback: extract URLs from object
   if (!downloads.length) {
     const urls = Array.from(collectUrls(payload));
-    const preferred = urls.filter(u => /\.mp4(\?|$)/i.test(u) || /play/i.test(u) || /video/i.test(u));
+    // prefer mp4/play-like urls
+    const preferred = urls.filter(u => /\.mp4(\?|$)/i.test(u) || /\/play\/|\/video\//i.test(u) || /play/i.test(u));
     const uniq = Array.from(new Set(preferred.length ? preferred : urls));
-    uniq.forEach((u, i) => downloads.push({ label: `Detected ${i+1}`, url: u, size: "", filename: `video_${i+1}.mp4` }));
+    uniq.forEach((u, i) => downloads.push({ label: `Detected ${i+1}`, url: u, size: "" }));
   }
 
-  // UI: show thumbnail / video preview if available
+  // UI: clear previous
   resultList.innerHTML = "";
 
-  // Cek apakah video bisa diputar (mp4)
-let videoPlayable = false;
-if (downloads.length) {
-  const first = downloads[0].url;
-  if (/\.mp4(\?|$)/i.test(first) || /play/i.test(first)) {
-    videoPlayable = true;
+  // --- try to find a playable URL (mp4 / play-like) first ---
+  let playableUrl = null;
+  for (const d of downloads) {
+    if (d.url && ( /\.mp4(\?|$)/i.test(d.url) || /\/play\/|\/video\//i.test(d.url) )) {
+      playableUrl = d.url;
+      break;
+    }
   }
-}
+  // if none matched, pick first http-looking url as last resort
+  if (!playableUrl && downloads.length) {
+    const firstCandidate = downloads.find(d => typeof d.url === "string" && /^https?:\/\//i.test(d.url));
+    if (firstCandidate) playableUrl = firstCandidate.url;
+  }
 
-// Jika video playable → sembunyikan thumbnail
-if (!videoPlayable && thumbnail) {
-  if (thumbBox && thumbImg) {
-    thumbImg.src = thumbnail;
-    thumbBox.classList.remove("hidden");
+  // If we have a playable url and video player present -> show it
+  if (playableUrl && previewVideo && playerBox) {
+    // set crossOrigin - may help with some CORS cases (still not guaranteed)
+    try { previewVideo.crossOrigin = "anonymous"; } catch (e) {}
+    previewVideo.src = playableUrl;
+    // set poster to thumbnail if available
+    if (thumbnail) previewVideo.poster = thumbnail;
+    previewVideo.load();
+    playerBox.classList.remove("hidden");
+
+    // hide thumbnail fallback (we will not show the <img> when video chosen)
+    if (thumbBox) thumbBox.classList.add("hidden");
   } else {
-    const img = document.createElement("img");
-    img.src = thumbnail;
-    img.alt = title || "thumbnail";
-    img.style.maxWidth = "100%";
-    img.style.borderRadius = "10px";
-    resultList.appendChild(img);
+    // show thumbnail if present (fallback)
+    if (thumbnail) {
+      if (thumbBox && thumbImg) {
+        thumbImg.src = thumbnail;
+        thumbBox.classList.remove("hidden");
+      } else {
+        const img = document.createElement("img");
+        img.src = thumbnail;
+        img.alt = title || "thumbnail";
+        img.style.maxWidth = "100%";
+        img.style.borderRadius = "10px";
+        resultList.appendChild(img);
+      }
+    }
+    // hide player if no playable url
+    if (playerBox) playerBox.classList.add("hidden");
   }
-}
 
+  // Title
   if (title) {
     const h = document.createElement("div");
     h.style.fontWeight = "700";
@@ -234,18 +257,8 @@ if (!videoPlayable && thumbnail) {
     resultList.appendChild(h);
   }
 
-  // Optional: show player using first download (if it's a playable mp4)
-  if (downloads.length && previewVideo && playerBox) {
-    const first = downloads[0].url;
-    if (/\.mp4(\?|$)/i.test(first) || /play/i.test(first) || first.includes("http")) {
-      previewVideo.src = first;
-      previewVideo.load();
-      playerBox.classList.remove("hidden");
-    }
-  }
-
-  // Render download rows
-  downloads.forEach((d, idx) => {
+  // Render download rows (buttons)
+  downloads.forEach(d => {
     const node = document.createElement("div");
     node.className = "result-item";
     node.innerHTML = `
@@ -254,9 +267,9 @@ if (!videoPlayable && thumbnail) {
         <div style="opacity:.75;font-size:13px">${d.size || ""}</div>
       </div>
 
-      <div style="display:flex;gap:12px;align-items:center;">
-        <a href="${d.url}" target="_blank" class="btn btn-ghost open-btn" rel="noopener noreferrer">Open</a>
-        <button class="btn btn-primary btn-download" data-url="${d.url}" data-fn="${d.filename || `video_${idx+1}.mp4`}">Download</button>
+      <div class="download-actions">
+        <a href="${d.url}" target="_blank" class="open-btn">Open</a>
+        <a href="${d.url}" download class="download-btn">Download</a>
       </div>
     `;
     resultList.appendChild(node);
