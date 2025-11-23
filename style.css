@@ -40,14 +40,16 @@ body::before {
 /* =============================
    CARD (GLASSMORPHISM + NEON)
    ============================= */
+/* CARD TRANSPARAN GLASS */
 .card {
-  background: rgba(0, 8, 25, 0.35);
-  backdrop-filter: blur(8px);
-  border-radius: 16px;
-  padding: 18px;
-  border: 1px solid rgba(120,160,255,0.18);
-  box-shadow: 0 4px 22px rgba(0, 0, 0, 0.55),
-              0 0 22px rgba(45,120,255,0.28) inset;
+  background: rgba(0, 10, 30, 0.22); /* semitransparan, tipis */
+  backdrop-filter: blur(12px);       /* bikin UI tetap kebaca */
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 18px;
+  border: 1px solid rgba(120,160,255,0.25); /* garis tipis biar UI keliatan */
+  box-shadow:
+    0 0 30px rgba(0, 0, 0, 0.50),
+    0 0 18px rgba(45,120,255,0.28) inset;
 }
 
 /* HEADER */
@@ -65,15 +67,10 @@ body::before {
 
 /* INPUT */
 #urlInput {
-  width:100%;
-  padding:14px 16px;
-  border-radius:12px;
-  background: rgba(0,0,0,0.45);
-  color:#fff;
-  border: 1px solid rgba(140,180,255,0.35);
-  box-shadow: 0 0 10px rgba(60,110,255,0.25);
+  background: rgba(0,0,0,0.28);
+  border: 1px solid rgba(150,180,255,0.35);
+  backdrop-filter: blur(4px);
 }
-
 /* ====================
    BUTTONS (NEON BLUE)
    ==================== */
@@ -88,12 +85,8 @@ body::before {
 }
 
 .btn-primary {
-  background: linear-gradient(180deg,#3f6aff,#2a4dff);
-  color:white;
-  box-shadow: 
-    0 0 18px rgba(77,130,255,0.7),
-    0 6px 16px rgba(0,0,0,0.35);
-  transition: .15s;
+  background: rgba(60,110,255,0.85);
+  backdrop-filter: blur(4px);
 }
 .btn-primary:hover {
   filter: brightness(1.08);
@@ -101,10 +94,12 @@ body::before {
 }
 
 .btn-ghost {
-  background: rgba(255,255,255,0.15);
-  color:white;
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(4px);
 }
-
+.card, #urlInput, .btn {
+  box-shadow: 0 4px 14px rgba(0,0,0,0.45);
+}
 /* ==========================
    STATUS BOX (SUCCESS/ERROR)
    ========================== */
