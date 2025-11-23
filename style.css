@@ -253,3 +253,51 @@ body::before {
 
 /* force readable text color inside cards */
 .card, .card * { color: #eaf2ff; }
+
+/* ============================================
+   FORCE TRANSPARENT UI (FINAL OVERRIDE)
+   ============================================ */
+
+/* CARD TRANSPARAN */
+.card {
+  background: rgba(0, 0, 0, 0.20) !important;
+  backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(150, 180, 255, 0.25) !important;
+}
+
+/* INPUT TRANSPARAN */
+#urlInput {
+  background: rgba(0, 0, 0, 0.22) !important;
+  backdrop-filter: blur(6px) !important;
+  border: 1px solid rgba(150, 180, 255, 0.40) !important;
+}
+
+/* BUTTON PRIMARY (BIRU) TRANSPARAN */
+.btn-primary {
+  background: rgba(60, 110, 255, 0.75) !important;
+  backdrop-filter: blur(6px) !important;
+}
+
+/* BUTTON GHOST (ABU) TRANSPARAN */
+.btn-ghost {
+  background: rgba(255, 255, 255, 0.12) !important;
+  backdrop-filter: blur(6px) !important;
+}
+
+/* RESULT BOX TRANSPARAN */
+.result {
+  background: rgba(0, 0, 20, 0.25) !important;
+  backdrop-filter: blur(6px) !important;
+}
+
+/* RESULT ITEM TRANSPARAN */
+.result-item {
+  background: rgba(0, 0, 30, 0.25) !important;
+  backdrop-filter: blur(6px) !important;
+}
+
+/* PLAYER DAN THUMB TRANSPARAN */
+.player, .thumb {
+  background: rgba(0,0,0,0.22) !important;
+  backdrop-filter: blur(6px) !important;
+}
