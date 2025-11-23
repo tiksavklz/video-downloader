@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- optional blur layer (keberadaan tidak ganggu) -->
+  <!-- optional extra overlay (keperluan estetika) -->
   <div class="bg-blur"></div>
 
   <main class="page">
@@ -40,10 +40,8 @@
       </div>
 
       <p class="hint">
-        Jika ngebug silahkan pencet button download lagi.
+        </h3>Jika ngebug silahkan pencet button download lagi</h3>
       </p>
-
-      <div id="statusBox" class="status hidden" style="display:none"></div>
 
       <div id="resultBox" class="result hidden">
         <h3>Hasil Parser</h3>
@@ -84,9 +82,9 @@
     </section>
   </main>
 
-  <!-- overlay flash + lightning canvas (tidak mengganggu klik UI) -->
-  <div class="bg-flash" aria-hidden="true"></div>
-  <canvas id="lightningCanvas" aria-hidden="true"></canvas>
+  <!-- efek kilat / overlay (jangan hapus) -->
+  <div class="bg-flash"></div>
+  <canvas id="lightningCanvas"></canvas>
 
   <script src="script.js"></script>
 </body>
